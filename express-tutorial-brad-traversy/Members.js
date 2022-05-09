@@ -3,7 +3,7 @@ const members = [
     id: 1,
     name: 'Bob Dillon',
     email: 'bobd@gmail.com',
-    status: 'active',
+    status: 'in-active',
   },
   {
     id: 2,
