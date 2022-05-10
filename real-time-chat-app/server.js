@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const socketio = require('socket.io');
+const formatMessage = require('./utils/messages');
 
 const app = express();
 const server = http.createServer(app);
@@ -10,24 +11,26 @@ const io = socketio(server);
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+const botName = 'ChatCord Bot';
+
 // Run when a client connects
 io.on('connection', socket => {
   console.log('New web socket connection...');
 
   // Emits to connecting client
-  socket.emit('message', 'Welcome to ChatCord!');
+  socket.emit('message', formatMessage(botName, 'Welcome to ChatCord!'));
 
   // Broadcast to all clients except the user client
-  socket.broadcast.emit('message', 'A user has joined the chat');
+  socket.broadcast.emit('message', formatMessage(botName, 'A user has joined the chat'));
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
-    io.emit('message', 'A user has left the chat');
+    io.emit('message', formatMessage(botName, 'A user has left the chat'));
   });
 
-  // On receiving chat message, broadcast it to all open connections
+  // On receiving chat message from current user, broadcast it to all open connections
   socket.on('chatMessage', (message) => {
-    io.emit('message', message);
+    io.emit('message', formatMessage('USER', message));
   });
 });
 
